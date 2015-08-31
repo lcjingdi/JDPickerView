@@ -18,6 +18,7 @@
 
 - (instancetype)initWithInfoName:(NSString *)infoName andFrame:(CGRect)frame{
     if (self = [super initWithFrame:frame]) {
+        self.backgroundColor = [UIColor lightGrayColor];
         // 加载plist
         NSString *path = [[NSBundle mainBundle] pathForResource:infoName ofType:@"plist"];
         NSArray *array = [NSArray arrayWithContentsOfFile:path];

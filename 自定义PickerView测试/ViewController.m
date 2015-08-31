@@ -10,8 +10,12 @@
 #import "PlateNumberView.h"
 
 @interface ViewController ()<PlateNumberViewDelegate>
+@property (nonatomic,weak) PlateNumberView *plateView;
+
 @property (nonatomic,strong) NSArray *pickerArray;
 @property (nonatomic,weak) UILabel *label;
+@property (nonatomic,weak) UIButton *button;
+
 
 @end
 
@@ -25,72 +29,55 @@
     }
     return _pickerArray;
 }
-
+- (PlateNumberView *)plateView {
+    if (_plateView == nil) {
+        PlateNumberView *view = [[PlateNumberView alloc] initWithInfoName:@"city" andFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, 180)];
+        view.delegate = self;
+        _plateView = view;
+        [self.view addSubview:view];
+    }
+    return _plateView;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     UILabel *label = ({
         UILabel *label = [[UILabel alloc] init];
         self.label = label;
-        label.frame = CGRectMake(50, 333, 333, 200);
-        label.text = @"xxxxxxxklasdjfa;sdfj";
+        label.frame = CGRectMake(50, 250, 333, 200);
+        label.text = @"车牌号";
         label;
     });
     [self.view addSubview:label];
     
-    PlateNumberView *picker = [[PlateNumberView alloc] initWithInfoName:@"city" andFrame:CGRectMake(50, 50, 250, 200)];
-//    UIPickerView *picker = [[UIPickerView alloc] initWithFrame:CGRectMake(50, 50, 250, 200)];
-    picker.delegate = self;
-//    [picker selectRow:2 inComponent:2 animated:YES];
-    [self.view addSubview:picker];
+    UIButton *button = ({
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeContactAdd];
+        [button addTarget:self action:@selector(pickerBUttonClick) forControlEvents:UIControlEventTouchUpInside];
+        self.button = button;
+        button.frame = CGRectMake(50, 50, 333, 200);
+        button;
+    });
+    [self.view addSubview:button];
 }
 - (void)currentSelectedTitle:(NSString *)title {
     self.label.text = title;
 }
-// returns the number of 'columns' to display.
-//- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
-//    return self.pickerArray.count;
-//}
-//
-//// returns the # of rows in each component..
-//- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
-//    return [self.pickerArray[component] count];
-//}
-//- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
-//    NSArray *array = self.pickerArray[component];
-//    return array[row];
-//}
-//- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-//
-//    // 第一列选择的行
-//    NSUInteger row1 = [pickerView selectedRowInComponent:0];
-//    NSString *str1 = self.pickerArray[0][row1];
-//    
-//    //第二列选择的行
-//    NSUInteger row2 = [pickerView selectedRowInComponent:1];
-//    NSString *str2 = self.pickerArray[1][row2];
-//
-//    // 第三列选择的行
-//    NSUInteger row3 = [pickerView selectedRowInComponent:2];
-//    NSString *str3 = self.pickerArray[2][row3];
-//    
-//    // 第四列选择的行
-//    NSUInteger row4 = [pickerView selectedRowInComponent:3];
-//    NSString *str4 = self.pickerArray[3][row4];
-//    
-//    // 第五列选择的行
-//    NSUInteger row5 = [pickerView selectedRowInComponent:4];
-//    NSString *str5 = self.pickerArray[4][row5];
-//    
-//    // 第六列选择的行
-//    NSUInteger row6 = [pickerView selectedRowInComponent:5];
-//    NSString *str6 = self.pickerArray[5][row6];
-//    
-//    // 第七列选择的行
-//    NSUInteger row7 = [pickerView selectedRowInComponent:6];
-//    NSString *str7 = self.pickerArray[6][row7];
-//    
-//    
-//
-//    self.label.text = [NSString stringWithFormat:@"%@%@%@%@%@%@%@",str1,str2,str3,str4,str5,str6,str7];
-//}
+- (void)pickerBUttonClick {
+    if (self.plateView.frame.origin.y == self.view.frame.size.height) {
+        NSLog(@"隐藏着的->%@",NSStringFromCGRect(self.plateView.frame));
+        CGRect rect = self.plateView.frame;
+        rect.origin.y -= 180;
+        [UIView animateWithDuration:0.25 animations:^{
+            self.plateView.frame = rect;
+        }];
+        NSLog(@"隐藏着的->%@",NSStringFromCGRect(self.plateView.frame));
+    } else {
+         NSLog(@"关闭隐藏->%@",NSStringFromCGRect(self.plateView.frame));
+        CGRect rect = self.plateView.frame;
+        rect.origin.y += 180;
+        [UIView animateWithDuration:0.25 animations:^{
+            self.plateView.frame = rect;
+        }];
+        NSLog(@"关闭隐藏->%@",NSStringFromCGRect(self.plateView.frame));
+    }
+}
 @end
