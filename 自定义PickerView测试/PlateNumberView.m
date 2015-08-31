@@ -12,6 +12,9 @@
 
 @property (nonatomic,strong) NSArray *pickerArray;
 
+
+@property (nonatomic,copy) NSString *str;
+
 @end
 
 @implementation PlateNumberView
@@ -23,12 +26,41 @@
         NSString *path = [[NSBundle mainBundle] pathForResource:infoName ofType:@"plist"];
         NSArray *array = [NSArray arrayWithContentsOfFile:path];
         self.pickerArray = array;
+        
         // 设置pickerView
-        UIPickerView *picker = [[UIPickerView alloc] initWithFrame:self.bounds];
+        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, 44)];
+        
+        UIButton *button1 = [UIButton buttonWithType:UIButtonTypeCustom];
+        [button1 addTarget:self action:@selector(dismiss) forControlEvents:UIControlEventTouchUpInside];
+        button1.backgroundColor = [UIColor yellowColor];
+        [button1 setTitle:@"取消" forState:UIControlStateNormal];
+        button1.frame = CGRectMake(self.frame.size.width - 44, 0, 44, 44);
+        [view addSubview:button1];
+        
+        UIButton *button2 = [UIButton buttonWithType:UIButtonTypeCustom];
+        [button2 addTarget:self action:@selector(dismissAndSendParams) forControlEvents:UIControlEventTouchUpInside];
+        [button2 setTitle:@"确定" forState:UIControlStateNormal];
+        button2.frame = CGRectMake(0, 0, 44, 44);
+        button2.backgroundColor = [UIColor blueColor];
+        [view addSubview:button2];
+        
+        view.backgroundColor = [UIColor lightGrayColor];
+        [self addSubview:view];
+        UIPickerView *picker = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 44, self.frame.size.width, self.frame.size.height)];
         picker.delegate = self;
         [self addSubview:picker];
     }
     return self;
+}
+- (void)dismiss{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(plateNumberDismissPicker)]) {
+        [self.delegate plateNumberDismissPicker];
+    }
+}
+- (void)dismissAndSendParams{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(plateNumberDismissPickerSendString:)]) {
+        [self.delegate plateNumberDismissPickerSendString:self.str];
+    }
 }
 - (NSArray *)pickerArray{
     if (!_pickerArray) {
@@ -75,8 +107,7 @@
     } else {
         str = self.pickerArray[row];
     }
-    if (self.delegate && [self.delegate respondsToSelector:@selector(currentSelectedTitle:)]) {
-        [self.delegate currentSelectedTitle:[str copy]];
-    }
+    self.str = str;
+    
 }
 @end
